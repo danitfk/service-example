@@ -10,6 +10,8 @@ services:
     depends_on:
       - db
       - app
+    networks:
+      - app
 
   proxy:
     build:
@@ -22,6 +24,10 @@ services:
     ports:
       - 80:80
       - 443:443
+    networks:
+      - web
+      - app
+
 
   app:
     build: .
@@ -37,6 +43,8 @@ services:
       - static:/usr/local/src/static:z
     ports:
       - 8000:8000
+    networks:
+      - app
 
   worker:
     build: .
@@ -48,6 +56,8 @@ services:
     depends_on:
       - db
       - broker
+    networks:
+      - app
 
   broker:
     image: rabbitmq:latest
@@ -57,6 +67,8 @@ services:
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
     volumes:
       - broker-data:/var/lib/rabbitmq
+    networks:
+     - app
 
   db:
     image: postgres:11
@@ -66,8 +78,16 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - app
 
 volumes:
   db-data:
   broker-data:
   static:
+
+networks:
+  app:
+    internal: true
+  web:
+    internal: false
