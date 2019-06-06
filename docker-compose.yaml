@@ -28,7 +28,6 @@ services:
       - web
       - app
 
-
   app:
     build: .
     command: uwsgi --ini uwsgi.ini
