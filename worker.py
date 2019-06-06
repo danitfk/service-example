@@ -1,8 +1,8 @@
 """Example Celery app."""
 from celery import Celery
-import datetime
+import datetime, os
 from models import PageView, setup
-app = Celery()
+app = Celery('tasks', broker=os.environ['BROKER_URL'])
 _, session = setup()
 
 
