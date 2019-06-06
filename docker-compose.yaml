@@ -1,0 +1,73 @@
+version: '3'
+services:
+  migration:
+    command: alembic upgrade head
+    build: .
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@db:5432/${POSTGRES_DB}
+    restart: "on-failure"
+    user: app
+    depends_on:
+      - db
+      - app
+
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    depends_on:
+      - app
+    volumes:
+      - static:/var/www/html/static:ro
+    ports:
+      - 80:80
+      - 443:443
+
+  app:
+    build: .
+    command: uwsgi --ini uwsgi.ini
+    restart: always
+    user: app
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@db:5432/${POSTGRES_DB}
+      BROKER_URL: pyamqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672/${RABBITMQ_DEFAULT_VHOST}
+    depends_on:
+      - db
+    volumes:
+      - static:/usr/local/src/static:z
+    ports:
+      - 8000:8000
+
+  worker:
+    build: .
+    command: celery -A worker worker
+    user: app
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@db:5432/${POSTGRES_DB}
+      BROKER_URL: pyamqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672/${RABBITMQ_DEFAULT_VHOST}
+    depends_on:
+      - db
+      - broker
+
+  broker:
+    image: rabbitmq:latest
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    volumes:
+      - broker-data:/var/lib/rabbitmq
+
+  db:
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+  broker-data:
+  static:
