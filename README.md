@@ -8,6 +8,22 @@ The goal of this project was creating a Docker-Compose file to have these servic
 4. Async Worker (Python, Celery)
 5. NGINX Serving the HTTP app and its static files
 
+Each of above services run by separated docker container.
+
+## :hammer: Requirements
+
+1. Installed docker,docker-compose, git (*Docker Engine release +v1.13.0*) [[HOW TO]](https://docs.docker.com/install/)
+2. Available HTTP/HTTPS port on Docker machine
+3. Proper Internet connectivity
+
+## :heavy_check_mark: Index
+
+- [ ] [Clone source code and docker-compose](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)
+- [ ] [Adjust environment variables](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)
+- [ ] [Generate self-signed SSL certificate](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose) *(optional, already included)*
+- [ ] [Generate Diffie-Hellman group **dhparam](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)** *(optional, already included)*
+- [ ] [Run service compose file](https://github.com/danitfk/service-example#run-service-compose-file)
+
 ### Clone source code and docker-compose
 
 First make a clone from [this](https://github.com/danitfk/service-example) repository into your local machine, Which `docker` and `docker-compose` installed before.
