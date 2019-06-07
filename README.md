@@ -2,11 +2,11 @@
 
 The goal of this project was creating a Docker-Compose file to have these services:
 
-1. Database (PostgreSQL)
-2. Messaging queue (RabbitMQ)
-3. HTTP App (Python app based on Flask + uWSGI)
-4. Async Worker (Python, Celery)
-5. NGINX Serving the HTTP app and its static files
+1. Database ([PostgreSQL](https://hub.docker.com/_/postgres))
+2. Messaging queue ([RabbitMQ](https://hub.docker.com/_/rabbitmq/))
+3. HTTP App ([Python](https://hub.docker.com/_/python) app based on Flask + uWSGI)
+4. Async Worker ([Python](https://hub.docker.com/_/python), Celery)
+5. [NGINX](https://hub.docker.com/_/nginx) Serving the HTTP app and its static files
 
 Each of above services run by separated docker container.
 
@@ -18,11 +18,13 @@ Each of above services run by separated docker container.
 
 ## :heavy_check_mark: Index
 
-- [ ] [Clone source code and docker-compose](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)
-- [ ] [Adjust environment variables](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)
-- [ ] [Generate self-signed SSL certificate](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose) *(optional, already included)*
-- [ ] [Generate Diffie-Hellman group **dhparam](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)** *(optional, already included)*
-- [ ] [Run service compose file](https://github.com/danitfk/service-example#run-service-compose-file)
+- [x] [Clone source code and docker-compose](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)
+- [x] [Adjust environment variables](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose)
+- [x] [Generate self-signed SSL certificate](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose) *(optional, already included)*
+- [x] [Generate Diffie-Hellman group (dhparam)](https://github.com/danitfk/service-example#clone-source-code-and-docker-compose) *(optional, already included)*
+- [x] [Run service compose file](https://github.com/danitfk/service-example#run-service-compose-file)
+
+## :gear: Run services
 
 ### Clone source code and docker-compose
 
@@ -50,6 +52,8 @@ RABBITMQ_DEFAULT_VHOST=rabbitvhost
 
 ### Generate a Self Signed SSL Certificate
 
+***This part is optional, SSL Certificate files already included in `certs` directory.***
+
 You have to create *SSL Certificate* related files in `certs` directory like this:
 
 First We will create a Self Signed SSL Certificate with OpenSSL. *Make sure OpenSSL package installed on your system ([How to install openssl](https://websiteforstudents.com/manually-install-the-latest-openssl-toolkit-on-ubuntu-16-04-18-04-lts/))*
@@ -75,13 +79,15 @@ Email Address []:admin@your_domain.com
 
 ### Generate Diffie-Hellman group
 
+**This part is optional, dhparam file already included in `certs` directory.**
+
 It may takes a while,to reduce time change 4096 to 2048.
 
 ```Shell
 openssl dhparam -out certs/dhparam.pem 4096
 ```
 
-### Run service compose file
+### Run docker compose file
 
 First, make sure your system already has `docker-compose` then run docker-compose command:
 
@@ -107,13 +113,15 @@ Starting serviceexample_proxy_1 ... done
 
 ```
 
+## :notebook: Notes:
 
+Explain more about the project including changes which are made. 
 
 ## Some code changes  in the source
 
 To retrieve `BROKER_URL` in worker or `DATABASE_URL` in App I've done some code changes to get those variable from environment. ([worker.py](https://github.com/danitfk/service-example/commit/168b9b3fd10bda90d481f555aa2f114f3cf6cff7) and [alembic env.py](https://github.com/danitfk/service-example/commit/eadc78c3b081045696f051269fb08f558ed24648))
 
-## NGINX Security
+## :shield: NGINX Security
 
 There are some best practices to secure an NGINX Web Server which publicly is available.
 
@@ -129,7 +137,7 @@ I did implement the important thing of NGINX security in Dockerized environment 
 - Enable the Cross-site-scripting (XSS) filter with `X-XSS-Protection "1; mode=block"`
 - Force HTTPS
 
-## Docker Security
+## :shield: Docker Security
 
 ### Non-root user for application
 
@@ -141,7 +149,7 @@ I've applied two separated network `app` which applications' container such as `
 
 
 
-## Better option for caching
+## :thinking: Better option for caching
 
 As mentioned before in "DevOps Engineer assignment", caching in NGINX has to be done with *Mircocaching* but there is a better option for caching. 
 
